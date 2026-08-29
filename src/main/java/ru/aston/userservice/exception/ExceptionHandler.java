@@ -24,7 +24,7 @@ public class ExceptionHandler {
 
         String errorMessage = exception.getBindingResult()
                 .getFieldErrors()
-                .get(0)
+                .getFirst()
                 .getDefaultMessage();
 
         return new ErrorResponseDto(errorMessage);

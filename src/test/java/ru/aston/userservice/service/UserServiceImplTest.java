@@ -10,6 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.aston.userservice.dtos.UserCreateDto;
 import ru.aston.userservice.dtos.UserUpdateDto;
 import ru.aston.userservice.exception.UserNotFoundException;
+import ru.aston.userservice.kafka.UserEvent;
+import ru.aston.userservice.kafka.UserEventProducer;
+import ru.aston.userservice.kafka.UserOperation;
 import ru.aston.userservice.model.User;
 import ru.aston.userservice.repository.UserRepository;
 
@@ -31,6 +34,9 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserEventProducer userEventProducer;
+
     @BeforeEach
     void setUp() {
         reset(userRepository);
@@ -47,6 +53,15 @@ class UserServiceImplTest {
         var response = userService.create(request);
 
         verify(userRepository).save(any(User.class));
+
+        verify(userEventProducer).send(
+                new UserEvent(
+                        1L,
+                        "ivan@mail.ru",
+                        UserOperation.CREATED
+                )
+        );
+
         assertThat(response.id()).isEqualTo(1L);
         assertThat(response.name()).isEqualTo("Ivan");
         assertThat(response.email()).isEqualTo("ivan@mail.ru");
@@ -136,6 +151,15 @@ class UserServiceImplTest {
         userService.delete(id);
 
         verify(userRepository).findById(id);
+
+        verify(userEventProducer).send(
+                new UserEvent(
+                        id,
+                        "ivan@mail.ru",
+                        UserOperation.DELETED
+                )
+        );
+
         verify(userRepository).delete(user);
     }
 

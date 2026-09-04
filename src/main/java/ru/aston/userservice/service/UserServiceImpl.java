@@ -6,6 +6,7 @@ import ru.aston.userservice.dtos.UserCreateDto;
 import ru.aston.userservice.dtos.UserResponseDto;
 import ru.aston.userservice.dtos.UserUpdateDto;
 import ru.aston.userservice.exception.UserNotFoundException;
+
 import ru.aston.userservice.model.User;
 import ru.aston.userservice.repository.UserRepository;
 

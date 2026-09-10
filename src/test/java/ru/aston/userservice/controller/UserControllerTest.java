@@ -63,7 +63,9 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Sergey"))
                 .andExpect(jsonPath("$.email").value("sergey@mail.ru"))
-                .andExpect(jsonPath("$.age").value(23));
+                .andExpect(jsonPath("$.age").value(23))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-users.href").exists());
 
         verify(userService).create(any());
     }
@@ -86,9 +88,10 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("Sergey"))
-                .andExpect(jsonPath("$.email")
-                        .value("sergey@mail.ru"))
-                .andExpect(jsonPath("$.age").value(40));
+                .andExpect(jsonPath("$.email").value("sergey@mail.ru"))
+                .andExpect(jsonPath("$.age").value(40))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-users.href").exists());
 
         verify(userService).getById(1L);
     }
@@ -117,11 +120,15 @@ public class UserControllerTest {
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Sergey"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("Alex"));
+                .andExpect(jsonPath("$._embedded.userResponseDtoList.length()").value(2))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[0].id").value(1))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[0].name").value("Sergey"))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[1].id").value(2))
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[1].name").value("Alex"))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[0]._links.self.href").exists())
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[1]._links.self.href").exists())
+                .andExpect(jsonPath("$._embedded.userResponseDtoList[0]._links.all-users.href").exists());
 
         verify(userService).getAll();
     }
@@ -153,11 +160,11 @@ public class UserControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name")
-                        .value("Sergey Updated"))
-                .andExpect(jsonPath("$.email")
-                        .value("sergey.updated@mail.ru"))
-                .andExpect(jsonPath("$.age").value(41));
+                .andExpect(jsonPath("$.name").value("Sergey Updated"))
+                .andExpect(jsonPath("$.email").value("sergey.updated@mail.ru"))
+                .andExpect(jsonPath("$.age").value(41))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-users.href").exists());
 
         verify(userService)
                 .update(eq(1L), any());

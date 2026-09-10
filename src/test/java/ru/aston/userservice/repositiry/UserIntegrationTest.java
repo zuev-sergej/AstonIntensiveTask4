@@ -64,9 +64,10 @@ class UserIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("Sergey"))
-                .andExpect(jsonPath("$.email")
-                        .value("sergey@mail.ru"))
+                .andExpect(jsonPath("$.email").value("sergey@mail.ru"))
                 .andExpect(jsonPath("$.age").value(40))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-users.href").exists())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -84,9 +85,10 @@ class UserIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.name").value("Sergey"))
-                .andExpect(jsonPath("$.email")
-                        .value("sergey@mail.ru"))
-                .andExpect(jsonPath("$.age").value(40));
+                .andExpect(jsonPath("$.email").value("sergey@mail.ru"))
+                .andExpect(jsonPath("$.age").value(40))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-users.href").exists());
 
 
         // PUT — UPDATE USER
@@ -104,11 +106,11 @@ class UserIntegrationTest {
                         .content(updateRequest))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
-                .andExpect(jsonPath("$.name")
-                        .value("Sergey Updated"))
-                .andExpect(jsonPath("$.email")
-                        .value("sergey.updated@mail.ru"))
-                .andExpect(jsonPath("$.age").value(41));
+                .andExpect(jsonPath("$.name").value("Sergey Updated"))
+                .andExpect(jsonPath("$.email").value("sergey.updated@mail.ru"))
+                .andExpect(jsonPath("$.age").value(41))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-users.href").exists());
 
 
         // GET — CHECK UPDATED USER
@@ -117,11 +119,11 @@ class UserIntegrationTest {
         mockMvc.perform(get("/api/users/{id}", userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
-                .andExpect(jsonPath("$.name")
-                        .value("Sergey Updated"))
-                .andExpect(jsonPath("$.email")
-                        .value("sergey.updated@mail.ru"))
-                .andExpect(jsonPath("$.age").value(41));
+                .andExpect(jsonPath("$.name").value("Sergey Updated"))
+                .andExpect(jsonPath("$.email").value("sergey.updated@mail.ru"))
+                .andExpect(jsonPath("$.age").value(41))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.all-users.href").exists());
 
 
         // DELETE — DELETE USER
